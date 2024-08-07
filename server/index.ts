@@ -5,7 +5,7 @@ import { useWebview } from '@Server/player/webview.js'
 import { VehicleHubEvent } from '../shared/vehicleHubEvents.js';
 import { Vehicle } from '@Shared/types/vehicle.js';
 import './garageManager.js'
-import { Garage, getGarages } from './garageManager.js';
+import { Garage, getAvailableSlots, getGarages } from './garageManager.js';
 
 
 const Rebar = useRebar();
@@ -92,7 +92,10 @@ alt.onRpc('garage:spawn', async (player : alt.Player, garageKey : string, vehId 
     const vehicle : any  = await get<{ _id: string }>({ _id : vehId }, 'Vehicles');
 
     // spawn vehicle in the parking spot not the last position
-    const newVehicle = new alt.Vehicle(vehicle.model, garage.slots[0].position, garage.slots[0].rotation);
+    let availableSlot = getAvailableSlots(garage.slots);
+    if (availableSlot == null)
+        return;
+    const newVehicle = new alt.Vehicle(vehicle.model, availableSlot.position, availableSlot.rotation);
     const veh = Rebar.vehicle.useVehicle(newVehicle);
 
 
