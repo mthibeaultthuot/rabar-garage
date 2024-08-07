@@ -5,15 +5,15 @@ import { VehicleHubEvent } from '../shared/vehicleHubEvents.js';
 
 const events = useEvents();
 let vehicles = ref<string[]>([]);
+let targetGarageKey;
 
 async function spawnVehicle(veh) {
-    console.log(veh)
-    const result = await events.emitServerRpc('garage:spawn', veh);
+    const result = await events.emitServerRpc('garage:spawn', targetGarageKey, veh);
 }
 
 function init() {
-    console.log(vehicles.value);
-    events.on(VehicleHubEvent.fromServer.playerVehicles, (data) => {
+    events.on(VehicleHubEvent.fromServer.playerVehicles, (garageKey, data) => {
+        targetGarageKey = garageKey;
         vehicles.value = data;
     });
 }
